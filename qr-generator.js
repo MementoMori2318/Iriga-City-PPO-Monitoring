@@ -887,7 +887,7 @@ function displayPUSList(records) {
     container.innerHTML = records.map(record => {
         const ageDisplay = record.dateOfBirth ? calculateAge(record.dateOfBirth) : '';
         const ageText = ageDisplay ? ` | Age: ${ageDisplay}` : '';
-        const displayDOB = formatDisplayDate(record.dateOfBirth);
+        const displayDOB = formatDateDisplay(record.dateOfBirth);
         return `<div class="batch-item" onclick="loadPUS('${record.pusId}')"><div class="batch-info"><div class="batch-name">${escapeHtml(record.pusName)} <span style="font-size:9px; background:#2a5298; color:white; padding:2px 6px; border-radius:10px;">${escapeHtml(record.pusId)}</span></div><div class="batch-details">${record.offenseCategory} | DOB: ${escapeHtml(displayDOB)}${ageText} | ${record.cluster||'No Cluster'}</div></div><button class="btn-small" onclick="event.stopPropagation(); regenerateQR('${record.pusId}')">🔄 Regenerate</button></div>`;
     }).join('');
 }
