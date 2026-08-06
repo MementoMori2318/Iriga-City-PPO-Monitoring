@@ -18,7 +18,7 @@ const AUTHORIZED_EMAILS = [
 ];
 
 const TEMPLATE_HEADERS = [
-    'PS ID',
+    'Docket Number',
     'Full Name',
     'Gender',
     'Date of Birth',
@@ -279,7 +279,7 @@ function showQRModal(qrCanvas, clientData) {
     if (modalClientInfo) {
         modalClientInfo.innerHTML = `
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px 12px;">
-                <div><strong>📋 PS ID:</strong></div>
+                <div><strong>📋 Docket Number:</strong></div>
                 <div>${escapeHtml(clientData.pusId)}</div>
                 <div><strong>👤 Full Name:</strong></div>
                 <div>${escapeHtml(clientData.pusName)}</div>
@@ -339,7 +339,7 @@ document.getElementById('qrForm')?.addEventListener('submit', async function(e) 
         let dateOfBirth = document.getElementById('dateOfBirth')?.value || '';
 
         if (!pusId || !pusName || !dateOfBirth) {
-            alert('Please fill in PS ID, Full Name, and Date of Birth');
+            alert('Please fill in Docket Number, Full Name, and Date of Birth');
             return;
         }
 
@@ -591,7 +591,7 @@ document.getElementById('importBtn')?.addEventListener('click', async function()
             }
             
             const pusData = {
-                pusId: String(row['PS ID'] || row['pusId'] || `PS-${Date.now()}-${i}`),
+                pusId: String(row['Docket Number'] || row['pusId'] || row['PS ID'] || `DOCKET-${Date.now()}-${i}`),
                 pusName: String(row['Full Name'] || row['pusName'] || row['NAME OF CLIENT'] || 'Unknown'),
                 gender: String(row['Gender'] || row['gender'] || 'Female'),
                 dateOfBirth: dateOfBirth,
@@ -957,7 +957,7 @@ function clearForm() {
 
 document.getElementById('templateHelpLink')?.addEventListener('click',(e)=>{ 
     e.preventDefault(); 
-    alert("📋 Required headers: PS ID, Full Name, Gender, Date of Birth, Offense Category, Criminal Case Number, Start Date, End Date, Address, Supervising Officer, Cluster\n\n📅 The Excel template uses actual date fields. You can enter dates in any format (MM/DD/YYYY, DD/MM/YYYY, Month DD, YYYY, etc.) and they will be automatically converted!"); 
+    alert("📋 Required headers: Docket Number, Full Name, Gender, Date of Birth, Offense Category, Criminal Case Number, Start Date, End Date, Address, Supervising Officer, Cluster\n\n📅 The Excel template uses actual date fields. You can enter dates in any format (MM/DD/YYYY, DD/MM/YYYY, Month DD, YYYY, etc.) and they will be automatically converted!"); 
 });
 
 document.getElementById('logoutBtn')?.addEventListener('click', function() {
