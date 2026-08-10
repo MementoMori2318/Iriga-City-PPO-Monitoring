@@ -591,7 +591,7 @@ document.getElementById('importBtn')?.addEventListener('click', async function()
             }
             
             const pusData = {
-                pusId: String(row['Docket Number'] || row['pusId'] || row['PS ID'] || `DOCKET-${Date.now()}-${i}`),
+                pusId: String(row['Docket Number'] || row['pusId'] || row['PS ID'] || 'N/A'),
                 pusName: String(row['Full Name'] || row['pusName'] || row['NAME OF CLIENT'] || 'Unknown'),
                 gender: String(row['Gender'] || row['gender'] || 'Female'),
                 dateOfBirth: dateOfBirth,
