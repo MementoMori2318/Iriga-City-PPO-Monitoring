@@ -14,6 +14,27 @@ const AUTHORIZED_EMAILS = [
 ];
 
 // ============================================
+// LEGACY AUTO-GENERATED DOCKET NUMBER FILTER
+// The OLD QR generator (before the backend fix) invented random IDs and
+// baked them directly into printed QR codes/ID cards whenever no real
+// docket number was entered, e.g.:
+//   DOCKET-1786326803341-5
+//   PS-1786326803341-50
+// Those cards are already printed and in circulation, so instead of
+// reprinting, we detect that pattern on the client side too and show/
+// send "N/A" instead of the random string. Mirrors the same pattern
+// used in the backend Code.gs (cleanDocketNumber / LEGACY_AUTO_DOCKET_PATTERN).
+// ============================================
+const LEGACY_AUTO_DOCKET_PATTERN = /^(DOCKET|PS)-\d{10,}-\d{1,4}$/i;
+
+function cleanDocketNumber(id) {
+    const trimmed = (id || '').toString().trim();
+    if (!trimmed) return '';
+    if (LEGACY_AUTO_DOCKET_PATTERN.test(trimmed)) return '';
+    return trimmed;
+}
+
+// ============================================
 // DATE UTILITY FUNCTIONS
 // ============================================
 
@@ -145,7 +166,7 @@ function parseQRData(rawText) {
             });
             return {
                 source: 'json',
-                pusId:             json.pusId    || json.clientId   || json.id          || '',
+                pusId:             cleanDocketNumber(json.pusId || json.clientId || json.id || ''),
                 pusName:           json.pusName  || json.clientName || json.name        || json.fullName || '',
                 gender:            json.gender   || '',
                 dateOfBirth:       json.dateOfBirth || json.dob     || json.birthDate   || '',
@@ -168,7 +189,7 @@ function parseQRData(rawText) {
             const p = url.searchParams;
             return {
                 source: 'url',
-                pusId:           p.get('id')     || p.get('pusId')    || p.get('clientId') || '',
+                pusId:           cleanDocketNumber(p.get('id') || p.get('pusId') || p.get('clientId') || ''),
                 pusName:         p.get('name')   || p.get('pusName')  || p.get('fullName') || '',
                 gender:          p.get('gender') || '',
                 dateOfBirth:     normalizeDate(p.get('dob') || p.get('dateOfBirth') || ''),
@@ -194,7 +215,7 @@ function parseQRData(rawText) {
         const bday = get('BDAY');
         return {
             source: 'vcard',
-            pusId:           get('UID') || get('NOTE'),
+            pusId:           cleanDocketNumber(get('UID') || get('NOTE')),
             pusName:         fn,
             gender:          '',
             dateOfBirth:     normalizeDate(bday),
@@ -219,7 +240,7 @@ function parseQRData(rawText) {
         });
         return {
             source: 'keyvalue',
-            pusId:           kv['ps_id'] || kv['id'] || kv['client_id'] || '',
+            pusId:           cleanDocketNumber(kv['ps_id'] || kv['id'] || kv['client_id'] || ''),
             pusName:         kv['full_name'] || kv['name'] || kv['client_name'] || '',
             gender:          kv['gender'] || '',
             dateOfBirth:     normalizeDate(kv['date_of_birth'] || kv['dob'] || kv['birth_date'] || ''),
@@ -646,7 +667,9 @@ async function submitAttendance(e) {
     const attendanceData = {
         employeeEmail: currentUser.email,
         clientName: currentPUSData.pusName || currentPUSData.clientName,
-        clientId: currentPUSData.pusId || currentPUSData.clientId,
+        // Already cleaned in parseQRData, but clean again here in case
+        // currentPUSData.clientId came from somewhere else.
+        clientId: cleanDocketNumber(currentPUSData.pusId || currentPUSData.clientId),
         gender: currentPUSData.gender,
         age: calculatedAge,
         offenseCategory: currentPUSData.offenseCategory,
