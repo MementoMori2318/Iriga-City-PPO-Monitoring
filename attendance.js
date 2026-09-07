@@ -13,18 +13,7 @@ const AUTHORIZED_EMAILS = [
     'irigacityppo@gmail.com'
 ];
 
-// ============================================
-// LEGACY AUTO-GENERATED DOCKET NUMBER FILTER
-// The OLD QR generator (before the backend fix) invented random IDs and
-// baked them directly into printed QR codes/ID cards whenever no real
-// docket number was entered, e.g.:
-//   DOCKET-1786326803341-5
-//   PS-1786326803341-50
-// Those cards are already printed and in circulation, so instead of
-// reprinting, we detect that pattern on the client side too and show/
-// send "N/A" instead of the random string. Mirrors the same pattern
-// used in the backend Code.gs (cleanDocketNumber / LEGACY_AUTO_DOCKET_PATTERN).
-// ============================================
+
 const LEGACY_AUTO_DOCKET_PATTERN = /^(DOCKET|PS)-\d{10,}-\d{1,4}$/i;
 
 function cleanDocketNumber(id) {
